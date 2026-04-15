@@ -529,7 +529,7 @@ pose · expression · clothing · hair arrangement · environment · lighting ·
         stream: false
     };
 
-    const endpointUrl = `https://generativelanguage.googleapis.com/v1beta/models/${CONFIG.GEMINI.MODEL}:generateContent?key=${CONFIG.GEMINI.API_KEY}`;
+    const endpointUrl = `https://us-central1-gemmy-ai-bdc03.cloudfunctions.net/gemini`;
 
     const { data } = await axios.post(endpointUrl, payload, {
         headers: {
