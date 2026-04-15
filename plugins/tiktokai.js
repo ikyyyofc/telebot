@@ -120,7 +120,7 @@ async function imageGen(finalPrompt, refBuffer) {
                     `Gagal generate gambar setelah ${maxRetries} percobaan: ${error.response.data}`
                 );
             }
-            await new Promise(resolve => setTimeout(resolve, 60000));
+            await new Promise(resolve => setTimeout(resolve, 5000));
         }
     }
 }
@@ -631,14 +631,12 @@ module.exports = {
             await updateStatus(
                 "🧠 Menganalisis hasil dan membuat prompt detail..."
             );
-            await delay(60000);
             const finalPrompt = await gemini([
                 { role: "system", content: ENHANCER_SYSTEM }, // Pastikan ekstrak aslinya sudah lengkap
                 { role: "user", content: rawAnalysis }
             ]);
 
             await updateStatus("🎨 Generating gambar AI baru...");
-            await delay(60000);
             let resultImage = await imageGen(finalPrompt, refBuffer);
 
             await updateStatus(
