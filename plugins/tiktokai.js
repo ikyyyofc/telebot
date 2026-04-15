@@ -423,9 +423,35 @@ You will receive a structured forensic scene analysis. Your task: rewrite it int
 - If a nametag, name badge, or ID card with a person's name appears in the scene, replace that name with "Risa". Do NOT replace brand names, logos, slogans, or any other non-name text
 - Output ONLY the prompt paragraph — no intro sentence, no explanation, no markdown formatting`;
 
+async function getNewToken() {
+    try {
+        const response = await axios.post(
+            "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAxof8_SbpDcww38NEQRhNh0Pzvbphh-IQ",
+            { clientType: "CLIENT_TYPE_ANDROID" },
+            {
+                headers: {
+                    "User-Agent":
+                        "Dalvik/2.1.0 (Linux; U; Android 12; SM-S9280 Build/AP3A.240905.015.A2)",
+                    "Content-Type": "application/json",
+                    "X-Android-Package": "com.jetkite.gemmy",
+                    "X-Android-Cert":
+                        "037CD2976D308B4EFD63EC63C48DC6E7AB7E5AF2",
+                    "X-Firebase-GMPID":
+                        "1:652803432695:android:c4341db6033e62814f33f2"
+                }
+            }
+        );
+        return response.data.idToken;
+    } catch {
+        return null;
+    }
+}
+
 async function generateImage(finalPrompt, refBuffer) {
     // Dynamic import untuk file-type karena file-type di-design untuk ESM-only.
     // Jika ada error pada versi node lama, pastikan versi file-type sesuai.
+    const token = await getNewToken();
+    if (!token) throw new Error("Gagal mendapatkan token autentikasi Gemmy");
     const { fileTypeFromBuffer } = await import("file-type");
     const detected = await fileTypeFromBuffer(refBuffer);
     const mimeType = detected?.mime ?? "image/jpeg";
@@ -492,32 +518,6 @@ pose · expression · clothing · hair arrangement · environment · lighting ·
    - Natural dim lighting, grain, uneven illumination = REALISM. Do NOT remove them.`
         }
     ];
-
-    async function getNewToken() {
-        try {
-            const response = await axios.post(
-                "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAxof8_SbpDcww38NEQRhNh0Pzvbphh-IQ",
-                { clientType: "CLIENT_TYPE_ANDROID" },
-                {
-                    headers: {
-                        "User-Agent":
-                            "Dalvik/2.1.0 (Linux; U; Android 12; SM-S9280 Build/AP3A.240905.015.A2)",
-                        "Content-Type": "application/json",
-                        "X-Android-Package": "com.jetkite.gemmy",
-                        "X-Android-Cert":
-                            "037CD2976D308B4EFD63EC63C48DC6E7AB7E5AF2",
-                        "X-Firebase-GMPID":
-                            "1:652803432695:android:c4341db6033e62814f33f2"
-                    }
-                }
-            );
-            return response.data.idToken;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    const token = await getNewToken();
 
     const payload = {
         model: CONFIG.GEMINI.MODEL,
