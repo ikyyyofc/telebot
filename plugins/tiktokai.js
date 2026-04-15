@@ -128,7 +128,7 @@ async function imageGen(finalPrompt, refBuffer) {
 const CONFIG = {
     GEMINI: {
         URL: "https://us-central1-gemmy-ai-bdc03.cloudfunctions.net/gemini",
-        MODEL: "gemini-3.1-flash-image-preview",
+        MODEL: "gemini-3-pro-image-preview",
         HEADERS: {
             "User-Agent": "okhttp/5.3.2",
             "Accept-Encoding": "gzip",
@@ -527,7 +527,7 @@ pose · expression · clothing · hair arrangement · environment · lighting ·
             generationConfig: {
                 responseModalities: ["IMAGE"],
                 imageConfig: { imageSize: "2K" },
-                thinkingConfig: { thinkingLevel: "HIGH" },
+              //  thinkingConfig: { thinkingLevel: "HIGH" },
                 temperature: 0
             },
             systemInstruction: { role: "system", parts: partsSystem }
