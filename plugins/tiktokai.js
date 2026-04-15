@@ -126,8 +126,13 @@ async function imageGen(finalPrompt, refBuffer) {
 
 const CONFIG = {
     GEMINI: {
-        API_KEY: "AIzaSyCdhdsMbrIkC8G5oCLEUtAUydviogxbEAk",
-        MODEL: "gemini-3.1-flash-image-preview"
+        URL: "https://us-central1-gemmy-ai-bdc03.cloudfunctions.net/gemini",
+        MODEL: "gemini-3.1-flash-image-preview",
+        HEADERS: {
+            "User-Agent": "okhttp/5.3.2",
+            "Accept-Encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8"
+        }
     }
 };
 
