@@ -4,6 +4,7 @@ const path = require("path");
 const axios = require("axios");
 const os = require("os");
 const ffmpeg = require("fluent-ffmpeg");
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Asumsi Anda telah menyesuaikan file-file lib ini ke format CommonJS (module.exports)
 const gemini = require("../lib/gemini");
