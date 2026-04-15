@@ -534,7 +534,7 @@ module.exports = {
 
         try {
             if (!args[0]) {
-                return bot.sendMessage(chatId, "Kirimkan URL TikTok yang ingin diproses!\nContoh: `.tiktokai https://vt.tiktok.com/...`");
+                return bot.sendMessage(chatId, "Kirimkan URL TikTok yang ingin diproses!\nContoh: `.clone https://vt.tiktok.com/...`");
             }
 
             const refPath = path.resolve(process.cwd(), "src/char_ai.jpeg");
