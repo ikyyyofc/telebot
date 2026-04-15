@@ -432,7 +432,59 @@ async function generateImage(finalPrompt, refBuffer) {
 
     const partsUser = [
         {
-            text: `GENERATE THE FOLLOWING IMAGE WITH MAXIMUM FIDELITY TO ALL SPECIFICATIONS:\n\n${finalPrompt}\n\n[... Instruksi Composition dan Identity Enforcement ...] ` 
+            text: `GENERATE THE FOLLOWING IMAGE WITH MAXIMUM FIDELITY TO ALL SPECIFICATIONS:
+
+${finalPrompt}
+
+━━━ COMPOSITION ENFORCEMENT (NON-NEGOTIABLE) ━━━
+1. CAMERA DISTANCE IS ABSOLUTE — this is the most commonly violated constraint:
+   - The camera distance and face fill percentage stated in the prompt CANNOT be changed
+   - If prompt says camera is ~25cm from face → the face must be extremely close and large in frame
+   - If prompt says face fills 80% of frame height → face must fill 80% of frame height — NOT 40%, NOT 50%
+   - DO NOT "zoom out" to show more background or more of the body
+   - DO NOT default to a "comfortable portrait distance" — match the EXACT distance described
+   - If the input was an extreme close-up selfie → the output must be an equally extreme close-up selfie
+   - BOTTOM CROP is a hard boundary — do NOT show more body below the stated cut point
+
+2. Every other crop boundary stated in the prompt is also ABSOLUTE.
+   - If a body part is stated as outside the frame → it must be COMPLETELY ABSENT. Not faded. Not implied. Not partially visible. GONE.
+   - If subject is stated as off-center → render off-center. Do NOT center or reframe.
+
+3. If the prompt states a PARTIAL FACE:
+   - The cropped side of the face has a hard frame edge cutting through it — like a photo crop
+   - The cut portion does NOT exist in the image
+   - Render the visible portion of the face naturally against the hard frame edge
+
+━━━ IDENTITY ENFORCEMENT (NON-NEGOTIABLE) ━━━
+Character identity locked to reference image:
+${IDENTITY_INLINE}
+
+These attributes NEVER change regardless of scene:
+- Face shape and bone structure: exact match to reference
+- Skin: NC15-NC20 warm light, realistic pores and texture
+- Eyes: monolid almond dark brown
+- Nose: small delicate
+- Lips: full natural cupid's bow
+- Hair: long soft S-wave dark-brown-to-black cool ash, wispy bangs
+- No glasses, no added accessories
+
+Only these change to match the scene description:
+pose · expression · clothing · hair arrangement · environment · lighting · framing · exposure
+
+━━━ NAME ENFORCEMENT ━━━
+- If the scene contains a nametag, name badge, or ID card, the name on it must read "Risa"
+- Brand names, logos, slogans, and all other text must be reproduced exactly as described — do NOT replace them
+
+
+3. The exposure, brightness, and color grade in the prompt are ABSOLUTE — do NOT auto-correct:
+   - If scene is dim/dark → output must be equally dim/dark. Do NOT add light.
+   - If scene has warm orange cast → output must have that same warm orange cast on skin and walls.
+   - If scene has deep shadows on face → preserve those shadows. Do NOT fill them in.
+   - FORBIDDEN: making the skin look brighter, cleaner, or more evenly lit than described
+   - FORBIDDEN: neutralizing color casts to make the image look "better"
+   - FORBIDDEN: adding ambient fill light not present in the described scene
+   - The output must look like it was taken in the EXACT SAME room with the EXACT SAME light as the input scene — all imperfections, darkness, and color casts included
+   - Natural dim lighting, grain, uneven illumination = REALISM. Do NOT remove them.`
         }
     ];
 
