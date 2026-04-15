@@ -631,12 +631,14 @@ module.exports = {
             await updateStatus(
                 "🧠 Menganalisis hasil dan membuat prompt detail..."
             );
+            await delay(60000);
             const finalPrompt = await gemini([
                 { role: "system", content: ENHANCER_SYSTEM }, // Pastikan ekstrak aslinya sudah lengkap
                 { role: "user", content: rawAnalysis }
             ]);
 
             await updateStatus("🎨 Generating gambar AI baru...");
+            await delay(60000);
             let resultImage = await imageGen(finalPrompt, refBuffer);
 
             await updateStatus(
