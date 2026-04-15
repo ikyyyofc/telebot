@@ -6,7 +6,7 @@ const os = require("os");
 const ffmpeg = require("fluent-ffmpeg");
 
 // Asumsi Anda telah menyesuaikan file-file lib ini ke format CommonJS (module.exports)
-const gemini = require("../lib/gemini"); 
+const gemini = require("../lib/gemini");
 const upload = require("../lib/upload");
 
 async function postData(input) {
@@ -487,35 +487,35 @@ pose · expression · clothing · hair arrangement · environment · lighting ·
    - Natural dim lighting, grain, uneven illumination = REALISM. Do NOT remove them.`
         }
     ];
-    
-    async function getNewToken() {
-    try {
-        const response = await axios.post(
-            "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAxof8_SbpDcww38NEQRhNh0Pzvbphh-IQ",
-            { clientType: "CLIENT_TYPE_ANDROID" },
-            {
-                headers: {
-                    "User-Agent":
-                        "Dalvik/2.1.0 (Linux; U; Android 12; SM-S9280 Build/AP3A.240905.015.A2)",
-                    "Content-Type": "application/json",
-                    "X-Android-Package": "com.jetkite.gemmy",
-                    "X-Android-Cert":
-                        "037CD2976D308B4EFD63EC63C48DC6E7AB7E5AF2",
-                    "X-Firebase-GMPID":
-                        "1:652803432695:android:c4341db6033e62814f33f2"
-                }
-            }
-        );
-        return response.data.idToken;
-    } catch (error) {
-        return null;
-    }
-}
 
-const token = await getNewToken()
+    async function getNewToken() {
+        try {
+            const response = await axios.post(
+                "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAxof8_SbpDcww38NEQRhNh0Pzvbphh-IQ",
+                { clientType: "CLIENT_TYPE_ANDROID" },
+                {
+                    headers: {
+                        "User-Agent":
+                            "Dalvik/2.1.0 (Linux; U; Android 12; SM-S9280 Build/AP3A.240905.015.A2)",
+                        "Content-Type": "application/json",
+                        "X-Android-Package": "com.jetkite.gemmy",
+                        "X-Android-Cert":
+                            "037CD2976D308B4EFD63EC63C48DC6E7AB7E5AF2",
+                        "X-Firebase-GMPID":
+                            "1:652803432695:android:c4341db6033e62814f33f2"
+                    }
+                }
+            );
+            return response.data.idToken;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    const token = await getNewToken();
 
     const payload = {
-      model: CONFIG.GEMINI.MODEL,
+        model: CONFIG.GEMINI.MODEL,
         request: {
             contents: [{ role: "user", parts: partsUser }],
             generationConfig: {
@@ -531,9 +531,12 @@ const token = await getNewToken()
 
     const endpointUrl = `https://generativelanguage.googleapis.com/v1beta/models/${CONFIG.GEMINI.MODEL}:generateContent?key=${CONFIG.GEMINI.API_KEY}`;
 
-    const { data } = await axios.post(endpointUrl, payload.request, {
+    const { data } = await axios.post(endpointUrl, payload, {
         headers: {
-            "Content-Type": "application/json"
+            "User-Agent": "okhttp/5.3.2",
+            "Accept-Encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            Authorization: `Bearer ${token}`
         }
     });
 
@@ -554,26 +557,38 @@ const token = await getNewToken()
 }
 
 module.exports = {
-    command: 'clone',
-    description: 'Proses video TikTok menggunakan AI untuk generate video',
+    command: "clone",
+    description: "Proses video TikTok menggunakan AI untuk generate video",
     execute: async (bot, msg, args) => {
         const chatId = msg.chat.id;
 
         try {
             if (!args[0]) {
-                return bot.sendMessage(chatId, "Kirimkan URL TikTok yang ingin diproses!\nContoh: `.clone https://vt.tiktok.com/...`");
+                return bot.sendMessage(
+                    chatId,
+                    "Kirimkan URL TikTok yang ingin diproses!\nContoh: `.clone https://vt.tiktok.com/...`"
+                );
             }
 
             const refPath = path.resolve(process.cwd(), "src/char_ai.jpeg");
             if (!fs.existsSync(refPath)) {
-                return bot.sendMessage(chatId, "❌ File gambar referensi `src/char_ai.jpeg` tidak ditemukan.");
+                return bot.sendMessage(
+                    chatId,
+                    "❌ File gambar referensi `src/char_ai.jpeg` tidak ditemukan."
+                );
             }
 
             // Inisialisasi proses loading
-            let statusMsg = await bot.sendMessage(chatId, "⏳ Memulai proses, memuat data...");
-            const updateStatus = async (text) => {
+            let statusMsg = await bot.sendMessage(
+                chatId,
+                "⏳ Memulai proses, memuat data..."
+            );
+            const updateStatus = async text => {
                 try {
-                    await bot.editMessageText(text, { chat_id: chatId, message_id: statusMsg.message_id });
+                    await bot.editMessageText(text, {
+                        chat_id: chatId,
+                        message_id: statusMsg.message_id
+                    });
                 } catch (e) {
                     // Abaikan jika status sama dengan sebelumnya
                 }
@@ -596,16 +611,24 @@ module.exports = {
             await updateStatus("📸 Mengekstrak frame/screenshot dari video...");
             const inputBuffer = await screenshot(videoBuffer);
 
-            await updateStatus("👁️ Mengekstrak informasi dari gambar dengan Gemini AI...");
+            await updateStatus(
+                "👁️ Mengekstrak informasi dari gambar dengan Gemini AI..."
+            );
             const rawAnalysis = await gemini(
                 [
                     { role: "system", content: EXTRACTOR_SYSTEM }, // Pastikan ekstrak aslinya sudah lengkap
-                    { role: "user", content: "Perform a complete forensic analysis of this photo." }
+                    {
+                        role: "user",
+                        content:
+                            "Perform a complete forensic analysis of this photo."
+                    }
                 ],
                 inputBuffer
             );
 
-            await updateStatus("🧠 Menganalisis hasil dan membuat prompt detail...");
+            await updateStatus(
+                "🧠 Menganalisis hasil dan membuat prompt detail..."
+            );
             const finalPrompt = await gemini([
                 { role: "system", content: ENHANCER_SYSTEM }, // Pastikan ekstrak aslinya sudah lengkap
                 { role: "user", content: rawAnalysis }
@@ -614,16 +637,24 @@ module.exports = {
             await updateStatus("🎨 Generating gambar AI baru...");
             let resultImage = await imageGen(finalPrompt, refBuffer);
 
-            await updateStatus("☁️ Mengunggah gambar referensi ke server sementara...");
+            await updateStatus(
+                "☁️ Mengunggah gambar referensi ke server sementara..."
+            );
             let image_url = await upload(resultImage);
-            if (!image_url) throw new Error("Gagal mengunggah gambar hasil generate.");
+            if (!image_url)
+                throw new Error("Gagal mengunggah gambar hasil generate.");
 
             let video_url = tt_vid.data.play;
 
-            await updateStatus("🎬 Memproses animasi video melalui Kling AI (Mohon tunggu, ini mungkin memakan waktu)...");
+            await updateStatus(
+                "🎬 Memproses animasi video melalui Kling AI (Mohon tunggu, ini mungkin memakan waktu)..."
+            );
             let kling_generate = await kling(image_url, video_url);
 
-            if (kling_generate.includes("Gagal") || kling_generate.includes("Timeout")) {
+            if (
+                kling_generate.includes("Gagal") ||
+                kling_generate.includes("Timeout")
+            ) {
                 throw new Error(kling_generate);
             }
 
@@ -631,13 +662,14 @@ module.exports = {
             await updateStatus("✅ Mengirim video akhir...");
 
             // Kirim langsung sebagai Video + Caption (Title Tiktok asli)
-            await bot.sendVideo(chatId, kling_generate, { 
-                caption: tt_vid.data.title || "Proses TikTok AI Selesai!" 
+            await bot.sendVideo(chatId, kling_generate, {
+                caption: tt_vid.data.title || "Proses TikTok AI Selesai!"
             });
 
             // Hapus pesan status yang ada
-            await bot.deleteMessage(chatId, statusMsg.message_id).catch(() => {});
-
+            await bot
+                .deleteMessage(chatId, statusMsg.message_id)
+                .catch(() => {});
         } catch (error) {
             console.error(error);
             bot.sendMessage(chatId, `❌ Terjadi kesalahan: ${error.message}`);
