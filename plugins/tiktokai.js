@@ -515,6 +515,7 @@ pose · expression · clothing · hair arrangement · environment · lighting ·
 const token = await getNewToken()
 
     const payload = {
+      model: CONFIG.GEMINI.MODEL,
         request: {
             contents: [{ role: "user", parts: partsUser }],
             generationConfig: {
