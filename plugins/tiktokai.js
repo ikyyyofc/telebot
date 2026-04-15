@@ -527,7 +527,7 @@ pose · expression · clothing · hair arrangement · environment · lighting ·
 }
 
 module.exports = {
-    command: 'tiktokai',
+    command: 'clone',
     description: 'Proses video TikTok menggunakan AI untuk generate video',
     execute: async (bot, msg, args) => {
         const chatId = msg.chat.id;
