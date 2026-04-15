@@ -117,7 +117,7 @@ async function imageGen(finalPrompt, refBuffer) {
         } catch (error) {
             if (attempt >= maxRetries) {
                 throw new Error(
-                    `Gagal generate gambar setelah ${maxRetries} percobaan: ${error.message}`
+                    `Gagal generate gambar setelah ${maxRetries} percobaan: ${error.response.data}`
                 );
             }
             await new Promise(resolve => setTimeout(resolve, 60000));
