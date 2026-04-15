@@ -534,16 +534,12 @@ pose · expression · clothing · hair arrangement · environment · lighting ·
         stream: false
     };
 
-    const endpointUrl = `https://us-central1-gemmy-ai-bdc03.cloudfunctions.net/gemini`;
+    const headers = {
+        ...CONFIG.GEMINI.HEADERS,
+        authorization: `Bearer ${token}`
+    };
 
-    const { data } = await axios.post(endpointUrl, payload, {
-        headers: {
-            "User-Agent": "okhttp/5.3.2",
-            "Accept-Encoding": "gzip",
-            "content-type": "application/json; charset=UTF-8",
-            Authorization: `Bearer ${token}`
-        }
-    });
+    const { data } = await axios.post(CONFIG.GEMINI.URL, payload, { headers });
 
     if (!data?.candidates?.length) throw new Error("No candidates in response");
 
